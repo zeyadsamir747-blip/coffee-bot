@@ -1,0 +1,164 @@
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+.app { max-width: 680px; padding: 1.5rem 1rem; font-family: var(--font-sans); }
+.header { text-align: center; margin-bottom: 1.25rem; }
+.title { font-size: 20px; font-weight: 500; color: var(--color-text-primary); }
+.subtitle { font-size: 13px; color: var(--color-text-secondary); margin-top: 4px; }
+.chat-box { background: var(--color-background-secondary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1rem; min-height: 300px; max-height: 400px; overflow-y: auto; margin-bottom: 1rem; display: flex; flex-direction: column; gap: 12px; }
+.msg { display: flex; gap: 10px; align-items: flex-start; }
+.msg.user { flex-direction: row-reverse; }
+.avatar { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 500; flex-shrink: 0; }
+.avatar.bot { background: #E1F5EE; color: #0F6E56; }
+.avatar.user { background: #EEEDFE; color: #534AB7; }
+.bubble { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 10px 14px; font-size: 14px; line-height: 1.6; color: var(--color-text-primary); max-width: 85%; }
+.msg.user .bubble { background: #EEEDFE; border-color: #AFA9EC; color: #26215C; }
+.input-row { display: flex; gap: 8px; margin-bottom: 1rem; }
+.input-row input { flex: 1; padding: 10px 14px; font-size: 14px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-secondary); background: var(--color-background-primary); color: var(--color-text-primary); }
+.send-btn { padding: 10px 18px; border-radius: var(--border-radius-md); border: 0.5px solid #AFA9EC; background: #EEEDFE; color: #534AB7; font-size: 14px; font-weight: 500; cursor: pointer; }
+.send-btn:hover { background: #CECBF6; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { padding: 6px 12px; background: var(--color-background-primary); border: 0.5px solid var(--color-border-secondary); border-radius: 999px; font-size: 12px; color: var(--color-text-secondary); cursor: pointer; }
+.chip:hover { border-color: #AFA9EC; color: #534AB7; background: #EEEDFE; }
+.typing { display: flex; gap: 4px; align-items: center; padding: 6px 2px; }
+.dot { width: 6px; height: 6px; border-radius: 50%; background: var(--color-text-secondary); animation: bounce 1s infinite; }
+.dot:nth-child(2) { animation-delay: 0.15s; }
+.dot:nth-child(3) { animation-delay: 0.3s; }
+@keyframes bounce { 0%,60%,100% { transform: translateY(0); } 30% { transform: translateY(-6px); } }
+</style>
+
+<div class="app">
+  <h2 class="sr-only">Coffee Knowledge Bot for specialty coffee barista training</h2>
+  <div class="header">
+    <div style="font-size:28px;margin-bottom:4px">☕</div>
+    <div class="title">Coffee Knowledge Bot</div>
+    <div class="subtitle">Ask anything about specialty coffee — بالعربي أو English</div>
+  </div>
+
+  <div class="chat-box" id="chat">
+    <div class="msg">
+      <div class="avatar bot">☕</div>
+      <div class="bubble">Hi! Ask me anything about specialty coffee — brewing, espresso, origins, and more.<br><br>أهلاً! اسألني أي سؤال عن القهوة بالعربي أو الإنجليزي.</div>
+    </div>
+  </div>
+
+  <div class="input-row">
+    <input type="text" id="userInput" placeholder="Ask a question... / اسأل هنا..." onkeydown="if(event.key==='Enter') sendMsg()" />
+    <button class="send-btn" onclick="sendMsg()">Send ↗</button>
+  </div>
+
+  <div class="chips">
+    <span class="chip" onclick="ask('What is specialty coffee?')">What is specialty coffee?</span>
+    <span class="chip" onclick="ask('ما هو الإسبريسو؟')">ما هو الإسبريسو؟</span>
+    <span class="chip" onclick="ask('What is espresso extraction?')">Espresso extraction</span>
+    <span class="chip" onclick="ask('ما الفرق بين washed وnatural؟')">Washed vs Natural</span>
+    <span class="chip" onclick="ask('What is a pour over?')">Pour over</span>
+    <span class="chip" onclick="ask('ما هو الـ cupping؟')">ما هو الـ cupping؟</span>
+    <span class="chip" onclick="ask('What is coffee grind size?')">Grind size</span>
+    <span class="chip" onclick="ask('ما هو الـ milk steaming؟')">Milk steaming</span>
+  </div>
+</div>
+
+<script>
+const kb = [
+  {
+    keys: ['specialty','سبيشالتي','specialty coffee','قهوة مميزة','ما هي','what is specialty'],
+    en: "Specialty coffee scores 80+ points on the SCA scale. It's traceable to a specific farm or region, carefully processed, and roasted to highlight natural flavors — not to hide defects. It's the highest quality tier in coffee.",
+    ar: "القهوة السبيشالتي هي القهوة اللي حصلت على 80 نقطة أو أكتر على مقياس SCA. بتكون من مزرعة معروفة، مُعالَجة بعناية، ومحمصة عشان تطلع نكهاتها الطبيعية. هي أعلى مستوى جودة في عالم القهوة."
+  },
+  {
+    keys: ['espresso','إسبريسو','اسبريسو','ما هو الاسبريسو','ما هو الإسبريسو'],
+    en: "Espresso is a concentrated coffee brewed by forcing hot water (93°C) through finely ground coffee under ~9 bars of pressure. A standard shot is 18–20g of coffee yielding 36–40g in 25–30 seconds.",
+    ar: "الإسبريسو هو قهوة مركزة بتتعمل عن طريق ضخ مياه ساخنة (93 درجة) خلال بودرة قهوة ناعمة بضغط 9 بار تقريباً. الشوت الأساسي: 18-20 جرام قهوة → 36-40 جرام في 25-30 ثانية."
+  },
+  {
+    keys: ['extraction','استخراج','over extracted','under extracted','تيمينج','timing'],
+    en: "Extraction time for espresso is 25–30 seconds. Under-extracted (too fast) = sour and weak. Over-extracted (too slow) = bitter and harsh. Adjust grind size to control: finer = slower, coarser = faster.",
+    ar: "وقت الاستخراج للإسبريسو المثالي هو 25-30 ثانية. لو أسرع = حامض وخفيف (under-extracted). لو أبطأ = مر وقاسي (over-extracted). الحل: عدّل الطحن — ناعم أكتر = أبطأ، خشن أكتر = أسرع."
+  },
+  {
+    keys: ['washed','natural','honey','process','معالجة','ووشد','ناتشورال','هاني','الفرق بين'],
+    en: "Washed (wet): fruit removed before drying → clean, bright, acidic flavors. Natural (dry): dried with fruit on → fruity, wine-like, heavy body. Honey: middle ground → sweet, balanced, smooth.",
+    ar: "Washed: بيتنزع الثمرة قبل التجفيف → نكهة نضيفة ومشرقة وحموضة واضحة.\nNatural: بيتجفف وهو في الثمرة → نكهة فواكه وعنب، جسم تقيل.\nHoney: بين الاتنين → حلو ومتوازن."
+  },
+  {
+    keys: ['pour over','pourover','v60','chemex','بور أوفر','بور اوفر','dripper'],
+    en: "Pour over is a manual brewing method where hot water is poured slowly over ground coffee in a filter. Ratio: 1:15 to 1:17 (coffee:water). Water temp: 90–96°C. It produces a clean, delicate, and flavorful cup.",
+    ar: "البور أوفر هو طريقة تحضير يدوية بتصب فيها الماء الساخن ببطء على القهوة المطحونة في فلتر. النسبة: 1:15 أو 1:17 (قهوة:ماء). درجة الحرارة: 90-96°C. بيطلع كوباية نضيفة ورقيقة ومعبّرة عن النكهة."
+  },
+  {
+    keys: ['cupping','كابينج','كابينغ','تذوق','tasting','ما هو الكابينج','ما هو الـ cupping'],
+    en: "Cupping is the professional method for evaluating coffee quality and flavor. Ground coffee is steeped in hot water, then tasted with a spoon. Scores are given for aroma, flavor, acidity, body, and aftertaste.",
+    ar: "الكابينج هو الطريقة الاحترافية لتقييم جودة القهوة ونكهتها. القهوة المطحونة بتتنقع في ماء ساخن وبعدين بتتذوق بملعقة. بتتقيّم على: الرائحة، النكهة، الحموضة، الجسم، والطعم اللي بيفضل بعد البلع."
+  },
+  {
+    keys: ['grind','طحن','grinder','size','مقاس','ناعم','خشن'],
+    en: "Grind size affects extraction speed. Fine grind = slower extraction = espresso. Medium = pour over, drip. Coarse = french press, cold brew. Always grind fresh — pre-ground coffee loses flavor within 15–30 minutes.",
+    ar: "حجم الطحن بيأثر على سرعة الاستخراج. ناعم = أبطأ = إسبريسو. متوسط = بور أوفر وكيميكس. خشن = فرنش برس وكولد برو. اطحن دايماً طازج — القهوة المطحونة بتفقد نكهتها في 15-30 دقيقة."
+  },
+  {
+    keys: ['milk','حليب','steaming','steam','فوم','foam','لاتيه','latte','كابتشينو','cappuccino'],
+    en: "For espresso drinks: steam milk to 60–65°C for lattes and flat whites. For cappuccino, create more foam (microfoam). Hold the jug at an angle, submerge the steam wand just below the surface, and stretch milk first then roll it.",
+    ar: "لتحضير مشروبات الإسبريسو: سخّن الحليب لـ 60-65 درجة للاتيه والفلات وايت. للكابتشينو، كوّن فوم أكتر. أمسك الإبريق بزاوية، حط رأس البخار تحت السطح بشوية، اعمل stretch الأول وبعدين roll للحليب."
+  },
+  {
+    keys: ['origin','أصل','ethiopia','إثيوبيا','colombia','كولومبيا','brazil','برازيل','يمن','yemen','africa','أفريقيا'],
+    en: "Coffee origins affect flavor: Ethiopia → floral, fruity, jasmine notes. Colombia → balanced, caramel, red apple. Brazil → nutty, chocolatey, low acidity. Yemen → winey, complex, heavy body. Each origin tells a story in the cup.",
+    ar: "أصل القهوة بيأثر على نكهتها تماماً: إثيوبيا → زهري وفواكه وياسمين. كولومبيا → متوازن وكراميل وتفاح أحمر. البرازيل → مكسرات وشوكولاتة وحموضة خفيفة. اليمن → نبيذي ومعقد وجسم تقيل."
+  },
+  {
+    keys: ['ratio','نسبة','coffee to water','كمية','dose','دوز'],
+    en: "Standard brew ratios: Espresso → 1:2 (18g coffee : 36g liquid). Pour over → 1:15 to 1:17. French press → 1:12 to 1:15. Cold brew → 1:8. Always weigh your coffee and water for consistency.",
+    ar: "نسب التحضير الأساسية: إسبريسو → 1:2 (18 جرام قهوة: 36 جرام سائل). بور أوفر → 1:15 إلى 1:17. فرنش برس → 1:12 إلى 1:15. كولد برو → 1:8. دايماً اوزن قهوتك ومياهك للحصول على نتيجة ثابتة."
+  }
+];
+
+function detect(text) {
+  return /[\u0600-\u06FF]/.test(text) ? 'ar' : 'en';
+}
+
+function findAnswer(q) {
+  const lower = q.toLowerCase();
+  for (const item of kb) {
+    if (item.keys.some(k => lower.includes(k.toLowerCase()))) {
+      return detect(q) === 'ar' ? item.ar : item.en;
+    }
+  }
+  const lang = detect(q);
+  return lang === 'ar'
+    ? "سؤال كويس! دي معلومة مش في قاعدة بياناتي دلوقتي. ممكن تسأل عن: الإسبريسو، الاستخراج، المعالجة، البور أوفر، الكابينج، الطحن، الحليب، أو أصول القهوة."
+    : "Good question! That's not in my knowledge base yet. Try asking about: espresso, extraction, processing, pour over, cupping, grind size, milk steaming, or coffee origins.";
+}
+
+function addMsg(text, role) {
+  const chat = document.getElementById('chat');
+  const msg = document.createElement('div');
+  msg.className = 'msg ' + role;
+  const av = document.createElement('div');
+  av.className = 'avatar ' + (role === 'user' ? 'user' : 'bot');
+  av.textContent = role === 'user' ? 'You' : '☕';
+  const bub = document.createElement('div');
+  bub.className = 'bubble';
+  bub.innerHTML = text.replace(/\n/g, '<br>');
+  msg.appendChild(av);
+  msg.appendChild(bub);
+  chat.appendChild(msg);
+  chat.scrollTop = chat.scrollHeight;
+}
+
+function ask(q) {
+  document.getElementById('userInput').value = q;
+  sendMsg();
+}
+
+function sendMsg() {
+  const input = document.getElementById('userInput');
+  const q = input.value.trim();
+  if (!q) return;
+  input.value = '';
+  addMsg(q, 'user');
+  setTimeout(() => {
+    addMsg(findAnswer(q), 'bot');
+  }, 600);
+}
+</script>
