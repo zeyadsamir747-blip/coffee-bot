@@ -1,133 +1,244 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Seven Fortunes — Coffee Knowledge Bot</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
 <style>
-* { box-sizing: border-box; margin: 0; padding: 0; }
-.app { max-width: 680px; padding: 1.5rem 1rem; font-family: var(--font-sans); }
-.header { text-align: center; margin-bottom: 1.25rem; }
-.title { font-size: 20px; font-weight: 500; color: var(--color-text-primary); }
-.subtitle { font-size: 13px; color: var(--color-text-secondary); margin-top: 4px; }
-.chat-box { background: var(--color-background-secondary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1rem; min-height: 300px; max-height: 400px; overflow-y: auto; margin-bottom: 1rem; display: flex; flex-direction: column; gap: 12px; }
-.msg { display: flex; gap: 10px; align-items: flex-start; }
-.msg.user { flex-direction: row-reverse; }
-.avatar { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 500; flex-shrink: 0; }
-.avatar.bot { background: #E1F5EE; color: #0F6E56; }
-.avatar.user { background: #EEEDFE; color: #534AB7; }
-.bubble { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 10px 14px; font-size: 14px; line-height: 1.6; color: var(--color-text-primary); max-width: 85%; }
-.msg.user .bubble { background: #EEEDFE; border-color: #AFA9EC; color: #26215C; }
-.input-row { display: flex; gap: 8px; margin-bottom: 1rem; }
-.input-row input { flex: 1; padding: 10px 14px; font-size: 14px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-secondary); background: var(--color-background-primary); color: var(--color-text-primary); }
-.send-btn { padding: 10px 18px; border-radius: var(--border-radius-md); border: 0.5px solid #AFA9EC; background: #EEEDFE; color: #534AB7; font-size: 14px; font-weight: 500; cursor: pointer; }
-.send-btn:hover { background: #CECBF6; }
-.chips { display: flex; flex-wrap: wrap; gap: 8px; }
-.chip { padding: 6px 12px; background: var(--color-background-primary); border: 0.5px solid var(--color-border-secondary); border-radius: 999px; font-size: 12px; color: var(--color-text-secondary); cursor: pointer; }
-.chip:hover { border-color: #AFA9EC; color: #534AB7; background: #EEEDFE; }
-.typing { display: flex; gap: 4px; align-items: center; padding: 6px 2px; }
-.dot { width: 6px; height: 6px; border-radius: 50%; background: var(--color-text-secondary); animation: bounce 1s infinite; }
-.dot:nth-child(2) { animation-delay: 0.15s; }
-.dot:nth-child(3) { animation-delay: 0.3s; }
-@keyframes bounce { 0%,60%,100% { transform: translateY(0); } 30% { transform: translateY(-6px); } }
+  :root {
+    --gold: #C9A84C;
+    --gold-light: #E8CC7A;
+    --dark: #0D0B08;
+    --dark2: #1A1610;
+    --dark3: #242018;
+    --cream: #F5EDD8;
+    --cream2: #EDE0C4;
+    --muted: #7A6E5F;
+    --border: rgba(201,168,76,0.2);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--dark); color: var(--cream); font-family: 'DM Sans', sans-serif; min-height: 100vh; display: flex; flex-direction: column; align-items: center; }
+  .bg-texture { position: fixed; inset: 0; z-index: 0; background: radial-gradient(ellipse 80% 50% at 50% -10%, rgba(201,168,76,0.08) 0%, transparent 60%), radial-gradient(ellipse 40% 40% at 90% 90%, rgba(201,168,76,0.04) 0%, transparent 50%); pointer-events: none; }
+  .wrap { position: relative; z-index: 1; width: 100%; max-width: 620px; padding: 2rem 1.25rem 2rem; display: flex; flex-direction: column; min-height: 100vh; }
+  header { text-align: center; margin-bottom: 1.5rem; }
+  .logo-mark { width: 48px; height: 48px; margin: 0 auto 1rem; border: 1px solid var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 22px; }
+  .brand { font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 600; color: var(--gold-light); letter-spacing: 0.08em; text-transform: uppercase; }
+  .tagline { font-size: 12px; font-weight: 300; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; margin-top: 6px; }
+  .divider { width: 60px; height: 1px; background: linear-gradient(90deg, transparent, var(--gold), transparent); margin: 1rem auto 0; }
+  .chat-area { flex: 1; background: var(--dark2); border: 1px solid var(--border); border-radius: 16px; padding: 1.25rem; overflow-y: auto; min-height: 320px; max-height: 420px; display: flex; flex-direction: column; gap: 14px; margin-bottom: 1rem; scrollbar-width: thin; scrollbar-color: var(--gold) var(--dark2); }
+  .msg { display: flex; gap: 10px; align-items: flex-end; }
+  .msg.user { flex-direction: row-reverse; }
+  .av { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 500; flex-shrink: 0; }
+  .av.bot { background: var(--dark3); border: 1px solid var(--gold); color: var(--gold); font-family: 'Cormorant Garamond', serif; font-size: 14px; }
+  .av.user { background: rgba(201,168,76,0.15); border: 1px solid rgba(201,168,76,0.3); color: var(--gold-light); }
+  .bubble { background: var(--dark3); border: 1px solid rgba(255,255,255,0.06); border-radius: 14px 14px 14px 4px; padding: 10px 14px; font-size: 14px; line-height: 1.7; color: var(--cream2); max-width: 85%; }
+  .msg.user .bubble { background: rgba(201,168,76,0.1); border-color: rgba(201,168,76,0.25); border-radius: 14px 14px 4px 14px; color: var(--cream); }
+  .typing-dots { display: flex; gap: 5px; padding: 4px 2px; }
+  .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--gold); opacity: 0.5; animation: pulse 1s infinite; }
+  .dot:nth-child(2) { animation-delay: 0.2s; }
+  .dot:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes pulse { 0%,60%,100% { opacity:0.3; transform:scale(1); } 30% { opacity:1; transform:scale(1.2); } }
+  .chips { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 1rem; }
+  .chip { padding: 5px 12px; background: transparent; border: 1px solid var(--border); border-radius: 999px; font-size: 12px; color: var(--muted); cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.2s; }
+  .chip:hover { border-color: var(--gold); color: var(--gold-light); background: rgba(201,168,76,0.06); }
+  .input-row { display: flex; gap: 8px; }
+  .input-row input { flex: 1; background: var(--dark2); border: 1px solid var(--border); border-radius: 12px; padding: 12px 16px; font-size: 14px; color: var(--cream); font-family: 'DM Sans', sans-serif; outline: none; transition: border-color 0.2s; }
+  .input-row input::placeholder { color: var(--muted); }
+  .input-row input:focus { border-color: rgba(201,168,76,0.5); }
+  .send-btn { background: var(--gold); border: none; border-radius: 12px; padding: 12px 20px; color: var(--dark); font-size: 13px; font-weight: 500; font-family: 'DM Sans', sans-serif; cursor: pointer; transition: background 0.2s; white-space: nowrap; }
+  .send-btn:hover { background: var(--gold-light); }
+  footer { text-align: center; margin-top: 1.5rem; font-size: 11px; color: var(--muted); letter-spacing: 0.05em; }
 </style>
+</head>
+<body>
+<div class="bg-texture"></div>
+<div class="wrap">
+  <header>
+    <div class="logo-mark">☕</div>
+    <div class="brand">Seven Fortunes</div>
+    <div class="tagline">Coffee Knowledge Assistant</div>
+    <div class="divider"></div>
+  </header>
 
-<div class="app">
-  <h2 class="sr-only">Coffee Knowledge Bot for specialty coffee barista training</h2>
-  <div class="header">
-    <div style="font-size:28px;margin-bottom:4px">☕</div>
-    <div class="title">Coffee Knowledge Bot</div>
-    <div class="subtitle">Ask anything about specialty coffee — بالعربي أو English</div>
-  </div>
-
-  <div class="chat-box" id="chat">
+  <div class="chat-area" id="chat">
     <div class="msg">
-      <div class="avatar bot">☕</div>
-      <div class="bubble">Hi! Ask me anything about specialty coffee — brewing, espresso, origins, and more.<br><br>أهلاً! اسألني أي سؤال عن القهوة بالعربي أو الإنجليزي.</div>
+      <div class="av bot">SF</div>
+      <div class="bubble">Welcome to Seven Fortunes Coffee Bot ☕<br>Ask me anything about specialty coffee — drinks, brewing, origins, barista skills, and more.<br><br>أهلاً! اسألني أي سؤال عن القهوة بالعربي أو الإنجليزي وهرد عليك على طول.</div>
     </div>
   </div>
 
-  <div class="input-row">
-    <input type="text" id="userInput" placeholder="Ask a question... / اسأل هنا..." onkeydown="if(event.key==='Enter') sendMsg()" />
-    <button class="send-btn" onclick="sendMsg()">Send ↗</button>
+  <div class="chips" id="chips">
+    <span class="chip" onclick="ask('What is specialty coffee?')">Specialty coffee</span>
+    <span class="chip" onclick="ask('ما هو الإسبريسو؟')">الإسبريسو</span>
+    <span class="chip" onclick="ask('What is a latte?')">Latte</span>
+    <span class="chip" onclick="ask('ما هو الكابتشينو؟')">كابتشينو</span>
+    <span class="chip" onclick="ask('What is a flat white?')">Flat White</span>
+    <span class="chip" onclick="ask('ما هو الـ pour over؟')">Pour Over</span>
+    <span class="chip" onclick="ask('What is espresso extraction?')">Extraction</span>
+    <span class="chip" onclick="ask('ما الفرق بين washed وnatural؟')">Washed vs Natural</span>
+    <span class="chip" onclick="ask('What are common barista mistakes?')">Barista mistakes</span>
+    <span class="chip" onclick="ask('ما هي أدوات الباريستا؟')">أدوات الباريستا</span>
+    <span class="chip" onclick="ask('Tell me about Ethiopian coffee')">Ethiopia</span>
+    <span class="chip" onclick="ask('ما هو الـ cupping؟')">Cupping</span>
+    <span class="chip" onclick="ask('What is cold brew?')">Cold Brew</span>
+    <span class="chip" onclick="ask('ما هو الـ milk steaming؟')">Milk Steaming</span>
   </div>
 
-  <div class="chips">
-    <span class="chip" onclick="ask('What is specialty coffee?')">What is specialty coffee?</span>
-    <span class="chip" onclick="ask('ما هو الإسبريسو؟')">ما هو الإسبريسو؟</span>
-    <span class="chip" onclick="ask('What is espresso extraction?')">Espresso extraction</span>
-    <span class="chip" onclick="ask('ما الفرق بين washed وnatural؟')">Washed vs Natural</span>
-    <span class="chip" onclick="ask('What is a pour over?')">Pour over</span>
-    <span class="chip" onclick="ask('ما هو الـ cupping؟')">ما هو الـ cupping؟</span>
-    <span class="chip" onclick="ask('What is coffee grind size?')">Grind size</span>
-    <span class="chip" onclick="ask('ما هو الـ milk steaming؟')">Milk steaming</span>
+  <div class="input-row">
+    <input type="text" id="userInput" placeholder="Ask about coffee... / اسأل عن القهوة..." onkeydown="if(event.key==='Enter') sendMsg()" />
+    <button class="send-btn" onclick="sendMsg()">Send ↗</button>
   </div>
+  <footer>Seven Fortunes · Barista Training Tool</footer>
 </div>
 
 <script>
 const kb = [
-  {
-    keys: ['specialty','سبيشالتي','specialty coffee','قهوة مميزة','ما هي','what is specialty'],
-    en: "Specialty coffee scores 80+ points on the SCA scale. It's traceable to a specific farm or region, carefully processed, and roasted to highlight natural flavors — not to hide defects. It's the highest quality tier in coffee.",
-    ar: "القهوة السبيشالتي هي القهوة اللي حصلت على 80 نقطة أو أكتر على مقياس SCA. بتكون من مزرعة معروفة، مُعالَجة بعناية، ومحمصة عشان تطلع نكهاتها الطبيعية. هي أعلى مستوى جودة في عالم القهوة."
-  },
-  {
-    keys: ['espresso','إسبريسو','اسبريسو','ما هو الاسبريسو','ما هو الإسبريسو'],
-    en: "Espresso is a concentrated coffee brewed by forcing hot water (93°C) through finely ground coffee under ~9 bars of pressure. A standard shot is 18–20g of coffee yielding 36–40g in 25–30 seconds.",
-    ar: "الإسبريسو هو قهوة مركزة بتتعمل عن طريق ضخ مياه ساخنة (93 درجة) خلال بودرة قهوة ناعمة بضغط 9 بار تقريباً. الشوت الأساسي: 18-20 جرام قهوة → 36-40 جرام في 25-30 ثانية."
-  },
-  {
-    keys: ['extraction','استخراج','over extracted','under extracted','تيمينج','timing'],
-    en: "Extraction time for espresso is 25–30 seconds. Under-extracted (too fast) = sour and weak. Over-extracted (too slow) = bitter and harsh. Adjust grind size to control: finer = slower, coarser = faster.",
-    ar: "وقت الاستخراج للإسبريسو المثالي هو 25-30 ثانية. لو أسرع = حامض وخفيف (under-extracted). لو أبطأ = مر وقاسي (over-extracted). الحل: عدّل الطحن — ناعم أكتر = أبطأ، خشن أكتر = أسرع."
-  },
-  {
-    keys: ['washed','natural','honey','process','معالجة','ووشد','ناتشورال','هاني','الفرق بين'],
-    en: "Washed (wet): fruit removed before drying → clean, bright, acidic flavors. Natural (dry): dried with fruit on → fruity, wine-like, heavy body. Honey: middle ground → sweet, balanced, smooth.",
-    ar: "Washed: بيتنزع الثمرة قبل التجفيف → نكهة نضيفة ومشرقة وحموضة واضحة.\nNatural: بيتجفف وهو في الثمرة → نكهة فواكه وعنب، جسم تقيل.\nHoney: بين الاتنين → حلو ومتوازن."
-  },
-  {
-    keys: ['pour over','pourover','v60','chemex','بور أوفر','بور اوفر','dripper'],
-    en: "Pour over is a manual brewing method where hot water is poured slowly over ground coffee in a filter. Ratio: 1:15 to 1:17 (coffee:water). Water temp: 90–96°C. It produces a clean, delicate, and flavorful cup.",
-    ar: "البور أوفر هو طريقة تحضير يدوية بتصب فيها الماء الساخن ببطء على القهوة المطحونة في فلتر. النسبة: 1:15 أو 1:17 (قهوة:ماء). درجة الحرارة: 90-96°C. بيطلع كوباية نضيفة ورقيقة ومعبّرة عن النكهة."
-  },
-  {
-    keys: ['cupping','كابينج','كابينغ','تذوق','tasting','ما هو الكابينج','ما هو الـ cupping'],
-    en: "Cupping is the professional method for evaluating coffee quality and flavor. Ground coffee is steeped in hot water, then tasted with a spoon. Scores are given for aroma, flavor, acidity, body, and aftertaste.",
-    ar: "الكابينج هو الطريقة الاحترافية لتقييم جودة القهوة ونكهتها. القهوة المطحونة بتتنقع في ماء ساخن وبعدين بتتذوق بملعقة. بتتقيّم على: الرائحة، النكهة، الحموضة، الجسم، والطعم اللي بيفضل بعد البلع."
-  },
-  {
-    keys: ['grind','طحن','grinder','size','مقاس','ناعم','خشن'],
-    en: "Grind size affects extraction speed. Fine grind = slower extraction = espresso. Medium = pour over, drip. Coarse = french press, cold brew. Always grind fresh — pre-ground coffee loses flavor within 15–30 minutes.",
-    ar: "حجم الطحن بيأثر على سرعة الاستخراج. ناعم = أبطأ = إسبريسو. متوسط = بور أوفر وكيميكس. خشن = فرنش برس وكولد برو. اطحن دايماً طازج — القهوة المطحونة بتفقد نكهتها في 15-30 دقيقة."
-  },
-  {
-    keys: ['milk','حليب','steaming','steam','فوم','foam','لاتيه','latte','كابتشينو','cappuccino'],
-    en: "For espresso drinks: steam milk to 60–65°C for lattes and flat whites. For cappuccino, create more foam (microfoam). Hold the jug at an angle, submerge the steam wand just below the surface, and stretch milk first then roll it.",
-    ar: "لتحضير مشروبات الإسبريسو: سخّن الحليب لـ 60-65 درجة للاتيه والفلات وايت. للكابتشينو، كوّن فوم أكتر. أمسك الإبريق بزاوية، حط رأس البخار تحت السطح بشوية، اعمل stretch الأول وبعدين roll للحليب."
-  },
-  {
-    keys: ['origin','أصل','ethiopia','إثيوبيا','colombia','كولومبيا','brazil','برازيل','يمن','yemen','africa','أفريقيا'],
-    en: "Coffee origins affect flavor: Ethiopia → floral, fruity, jasmine notes. Colombia → balanced, caramel, red apple. Brazil → nutty, chocolatey, low acidity. Yemen → winey, complex, heavy body. Each origin tells a story in the cup.",
-    ar: "أصل القهوة بيأثر على نكهتها تماماً: إثيوبيا → زهري وفواكه وياسمين. كولومبيا → متوازن وكراميل وتفاح أحمر. البرازيل → مكسرات وشوكولاتة وحموضة خفيفة. اليمن → نبيذي ومعقد وجسم تقيل."
-  },
-  {
-    keys: ['ratio','نسبة','coffee to water','كمية','dose','دوز'],
-    en: "Standard brew ratios: Espresso → 1:2 (18g coffee : 36g liquid). Pour over → 1:15 to 1:17. French press → 1:12 to 1:15. Cold brew → 1:8. Always weigh your coffee and water for consistency.",
-    ar: "نسب التحضير الأساسية: إسبريسو → 1:2 (18 جرام قهوة: 36 جرام سائل). بور أوفر → 1:15 إلى 1:17. فرنش برس → 1:12 إلى 1:15. كولد برو → 1:8. دايماً اوزن قهوتك ومياهك للحصول على نتيجة ثابتة."
-  }
+  // SPECIALTY COFFEE
+  { keys: ['specialty','سبيشالتي','specialty coffee','ما هي','what is specialty'],
+    en: "Specialty coffee scores 80+ points on the SCA scale. It's traceable to a specific farm or region, carefully processed, and roasted to highlight its natural flavors. It's the highest quality tier in coffee — the opposite of commodity coffee.",
+    ar: "القهوة السبيشالتي حصلت على 80 نقطة أو أكتر على مقياس SCA. بتكون من مزرعة معروفة، مُعالَجة بعناية، ومحمصة عشان تبرز نكهاتها الطبيعية. هي أعلى مستوى جودة في عالم القهوة." },
+
+  // ESPRESSO
+  { keys: ['espresso','إسبريسو','اسبريسو','ما هو الاسبريسو','ما هو الإسبريسو'],
+    en: "Espresso is concentrated coffee brewed by forcing hot water (93°C) through finely ground coffee at ~9 bars of pressure. Standard shot: 18–20g of coffee → 36–40g in 25–30 seconds. The base of most coffee drinks.",
+    ar: "الإسبريسو هو قهوة مركزة بتتعمل بضخ مياه ساخنة (93°C) خلال قهوة ناعمة بضغط 9 بار. الشوت الأساسي: 18-20 جرام قهوة → 36-40 جرام في 25-30 ثانية. هو أساس معظم مشروبات القهوة." },
+
+  // LATTE
+  { keys: ['latte','لاتيه','لاتيه','ما هو اللاتيه','what is a latte','café latte'],
+    en: "A latte is espresso + steamed milk with a thin layer of foam. Ratio: 1 shot espresso + 150–200ml milk. Milk is steamed to 60–65°C. It has a creamy, mild flavor — perfect for people who prefer less intense coffee.",
+    ar: "اللاتيه هو إسبريسو + حليب مبخر مع طبقة رقيقة من الفوم. النسبة: شوت إسبريسو + 150-200 مل حليب. الحليب بيتسخن لـ 60-65°C. نكهته كريمي وخفيف — مثالي لمن يفضل قهوة أقل حدة." },
+
+  // CAPPUCCINO
+  { keys: ['cappuccino','كابتشينو','كابوتشينو','ما هو الكابتشينو','what is cappuccino'],
+    en: "Cappuccino is espresso + equal parts steamed milk and thick microfoam. Traditional ratio: 1/3 espresso, 1/3 steamed milk, 1/3 foam. Smaller and stronger than a latte. Served in a 150–180ml cup.",
+    ar: "الكابتشينو هو إسبريسو + أجزاء متساوية من الحليب المبخر والفوم. النسبة التقليدية: ثلث إسبريسو، ثلث حليب، ثلث فوم. أصغر وأقوى من اللاتيه. يُقدَّم في كوب 150-180 مل." },
+
+  // FLAT WHITE
+  { keys: ['flat white','فلات وايت','ما هو الفلات وايت','what is flat white'],
+    en: "Flat white is a double ristretto (shorter, more concentrated espresso) with velvety steamed milk and minimal foam. Originated in Australia/New Zealand. Stronger than a latte, smoother than a cappuccino. Served in 150–160ml.",
+    ar: "الفلات وايت هو ريستريتو دبل (إسبريسو أكثر تركيزاً) مع حليب مبخر ناعم وفوم قليل جداً. أصله من أستراليا ونيوزيلندا. أقوى من اللاتيه وأنعم من الكابتشينو. يُقدَّم في 150-160 مل." },
+
+  // AMERICANO
+  { keys: ['americano','أمريكانو','ما هو الأمريكانو','what is americano'],
+    en: "Americano is espresso diluted with hot water. Ratio: 1 shot espresso + 100–150ml hot water. Has a similar strength to drip coffee but a different flavor profile. Black or with milk — your choice.",
+    ar: "الأمريكانو هو إسبريسو مخفف بالماء الساخن. النسبة: شوت إسبريسو + 100-150 مل ماء ساخن. قوته مشابهة لقهوة الفلتر لكن بنكهة مختلفة. تقدر تشربه سادة أو بحليب." },
+
+  // COLD BREW
+  { keys: ['cold brew','كولد برو','cold coffee','قهوة باردة','what is cold brew'],
+    en: "Cold brew is coffee steeped in cold water for 12–24 hours — no heat involved. Ratio: 1:8 (coffee:water). Result: smooth, low-acidity, naturally sweet concentrate. Serve over ice. Very different from iced coffee (which is just hot coffee poured over ice).",
+    ar: "الكولد برو هو قهوة بتتنقع في ماء بارد لمدة 12-24 ساعة — بدون حرارة. النسبة: 1:8 (قهوة:ماء). النتيجة: قهوة ناعمة وحموضتها خفيفة وحلوة بشكل طبيعي. تقدم على الثلج. مختلفة تماماً عن الآيسد كوفي." },
+
+  // POUR OVER
+  { keys: ['pour over','pourover','v60','chemex','بور أوفر','ما هو الـ pour over','dripper'],
+    en: "Pour over is manual brewing: hot water poured slowly over ground coffee in a filter. Ratio: 1:15–1:17. Temp: 90–96°C. Grind: medium. Produces a clean, bright, complex cup that highlights origin flavors. Popular methods: V60, Chemex, Kalita.",
+    ar: "البور أوفر طريقة تحضير يدوية — بتصب ماء ساخن ببطء على القهوة في فلتر. النسبة: 1:15 إلى 1:17. الحرارة: 90-96°C. الطحن: متوسط. بيطلع كوباية نضيفة ومعبّرة عن نكهة الأصل. أشهر الطرق: V60، Chemex، Kalita." },
+
+  // FRENCH PRESS
+  { keys: ['french press','فرنش برس','plunger','ما هو الفرنش برس'],
+    en: "French press is full-immersion brewing: coarse ground coffee steeped in hot water for 4 minutes, then pressed. Ratio: 1:12–1:15. Temp: 93–95°C. Produces a full-bodied, rich, slightly textured cup. No paper filter = more oils in the cup.",
+    ar: "الفرنش برس طريقة نقع كاملة: قهوة خشنة الطحن بتتنقع في ماء ساخن 4 دقائق ثم بتضغط. النسبة: 1:12 إلى 1:15. الحرارة: 93-95°C. بيطلع كوباية ثقيلة الجسم وغنية. بدون فلتر ورق = زيوت القهوة موجودة في الكوباية." },
+
+  // EXTRACTION
+  { keys: ['extraction','استخراج','over extracted','under extracted','timing','تيمينج'],
+    en: "Espresso extraction should be 25–30 seconds. Too fast (under-extracted) = sour, weak, thin. Too slow (over-extracted) = bitter, harsh, dry. Fix it with grind size: finer = slower, coarser = faster. Dose and tamping also affect extraction.",
+    ar: "وقت الاستخراج المثالي للإسبريسو: 25-30 ثانية. أسرع (under) = حامض وخفيف. أبطأ (over) = مر وقاسي. الحل: عدّل الطحن — ناعم أكتر = أبطأ، خشن أكتر = أسرع. الدوز والضغط أثناء التحضير كمان بيأثروا." },
+
+  // PROCESSING
+  { keys: ['washed','natural','honey','process','معالجة','الفرق بين washed','ناتشورال'],
+    en: "Processing methods affect flavor dramatically:\n• Washed: fruit removed before drying → clean, bright, acidic\n• Natural: dried with fruit on → fruity, wine-like, heavy body\n• Honey: middle ground → sweet, balanced, smooth\nSame bean, different process = completely different cup.",
+    ar: "طريقة المعالجة بتأثر على النكهة بشكل كبير:\n• Washed: بيتنزع الثمرة قبل التجفيف → نضيف ومشرق وحامض\n• Natural: بيتجفف بالثمرة → فواكه وعنب وجسم تقيل\n• Honey: بين الاتنين → حلو ومتوازن\nنفس الحبة، معالجة مختلفة = كوباية مختلفة تماماً." },
+
+  // MILK STEAMING
+  { keys: ['milk','حليب','steaming','steam','فوم','foam','latte art','لاتيه آرت'],
+    en: "Steaming milk properly:\n1. Fill pitcher 1/3 with cold milk\n2. Purge the wand first\n3. Submerge wand just below surface, angle the pitcher\n4. Stretch (add air) first for 2–3 seconds\n5. Then submerge deeper and roll/spin the milk\n6. Target temp: 60–65°C (hot but not burning)\nFor latte art: silky microfoam with no big bubbles.",
+    ar: "تبخير الحليب بشكل صح:\n1. املأ الإبريق بثلثه حليب بارد\n2. نظّف البخار الأول\n3. حط رأس البخار تحت السطح بشوية وميّل الإبريق\n4. اعمل stretch (أضف هواء) لـ 2-3 ثواني\n5. بعدين اغمس أعمق وخلي الحليب يلف\n6. الحرارة المثالية: 60-65°C\nلعمل لاتيه آرت: فوم ناعم زي الحرير بدون فقاعات كبيرة." },
+
+  // GRIND SIZE
+  { keys: ['grind','طحن','grinder','size','ناعم','خشن','مقاس'],
+    en: "Grind size guide:\n• Extra fine → Turkish coffee\n• Fine → Espresso\n• Medium-fine → Pour over (V60)\n• Medium → Drip, Chemex\n• Coarse → French press, Cold brew\nAlways grind fresh — pre-ground coffee loses 60% of its aroma within 15 minutes.",
+    ar: "دليل حجم الطحن:\n• ناعم جداً → قهوة تركية\n• ناعم → إسبريسو\n• متوسط-ناعم → بور أوفر (V60)\n• متوسط → ديريب، كيميكس\n• خشن → فرنش برس، كولد برو\nاطحن دايماً طازج — القهوة المطحونة بتفقد 60% من رائحتها في 15 دقيقة." },
+
+  // CUPPING
+  { keys: ['cupping','كابينج','كابينغ','تذوق','tasting','ما هو الكابينج','ما هو الـ cupping'],
+    en: "Cupping is the professional coffee evaluation method. Ground coffee is steeped in hot water, crust broken at 4 minutes, then tasted with a spoon. Evaluated on: fragrance, aroma, flavor, aftertaste, acidity, body, balance, and overall score. Used to assess quality and compare origins.",
+    ar: "الكابينج هو الطريقة الاحترافية لتقييم القهوة. القهوة المطحونة بتتنقع في ماء ساخن، بتكسر القشرة بعد 4 دقائق وبعدين تتذوق بملعقة. بتتقيّم على: الرائحة، النكهة، الحموضة، الجسم، التوازن، والانطباع العام. بتستخدم لمقارنة الأصول وتقييم الجودة." },
+
+  // ORIGINS - ETHIOPIA
+  { keys: ['ethiopia','إثيوبيا','ethiopian','يرغاشف','yirgacheffe','sidama','سيداما'],
+    en: "Ethiopia is the birthplace of coffee. Key regions:\n• Yirgacheffe: floral, jasmine, bergamot, citrus — bright and delicate\n• Sidama: fruity, peach, balanced acidity\n• Harrar: natural processed, wine-like, blueberry\nEthiopian coffee is often washed or natural, with high complexity and unique floral notes found nowhere else.",
+    ar: "إثيوبيا هي موطن القهوة الأصلي. أهم المناطق:\n• يرغاشف: زهري، ياسمين، حمضيات — مشرق ورقيق\n• سيداما: فواكه وخوخ وحموضة متوازنة\n• هرر: ناتشورال، نبيذي وتوت أزرق\nالقهوة الإثيوبية معقدة وفريدة ولا تشبهها قهوة أخرى في العالم." },
+
+  // ORIGINS - COLOMBIA
+  { keys: ['colombia','كولومبيا','colombian'],
+    en: "Colombia produces some of the most balanced specialty coffees. Known for: caramel sweetness, red apple acidity, milk chocolate body. Grown at high altitude (1500–2000m). Usually washed processed. Popular regions: Huila, Nariño, Antioquia.",
+    ar: "كولومبيا بتنتج من أكثر قهوات السبيشالتي توازناً. مشهورة بـ: حلاوة الكراميل، حموضة التفاح الأحمر، جسم الشوكولاتة بالحليب. بتتزرع على ارتفاع عالي (1500-2000م). غالباً معالجة washed. أشهر المناطق: هويلا، ناريينو، أنتيوكيا." },
+
+  // ORIGINS - KENYA
+  { keys: ['kenya','كينيا','kenyan'],
+    en: "Kenyan coffee is known for its bold, bright, complex profile. Flavor notes: blackcurrant, tomato, citrus, wine-like acidity. Often SL28 and SL34 varieties. Washed processed with a double fermentation technique unique to Kenya. Rated among the world's finest.",
+    ar: "القهوة الكينية مشهورة بجرأتها وتعقيدها. نكهاتها: كشمش أسود، طماطم، حمضيات، وحموضة نبيذية. غالباً أصناف SL28 وSL34. معالجة washed بتخمير مزدوج فريد من نوعه. تُصنَّف من أفضل القهوات في العالم." },
+
+  // ORIGINS - BRAZIL
+  { keys: ['brazil','برازيل','brazilian'],
+    en: "Brazil is the world's largest coffee producer. Known for: nutty, chocolatey, low acidity, full body. Often natural or pulped natural processed. Great as espresso base. Regions: Minas Gerais, São Paulo, Bahia. Consistent, approachable, crowd-pleasing.",
+    ar: "البرازيل أكبر منتج للقهوة في العالم. مشهورة بـ: مكسرات وشوكولاتة وحموضة خفيفة وجسم تقيل. غالباً معالجة ناتشورال. ممتازة كأساس للإسبريسو. مناطق: ميناس جيريس، ساو باولو، باهيا. متسقة ومحبوبة من الجميع." },
+
+  // ORIGINS - YEMEN
+  { keys: ['yemen','يمن','yemeni','يمني'],
+    en: "Yemen produces some of the world's most ancient and unique coffees. Known for: winey, chocolate, dried fruit, heavy body, complex. Grown in terraced mountains. Mostly natural processed. Mocha port gave 'mocha' its name. Rare, expensive, and highly sought after.",
+    ar: "اليمن بتنتج من أقدم وأفرد قهوات العالم. مشهورة بـ: نكهة نبيذية، شوكولاتة، فواكه مجففة، جسم تقيل ومعقد. بتتزرع في مدرجات جبلية. معالجة ناتشورال غالباً. ميناء المخا هو اللي أعطى 'الموكا' اسمها. نادرة وغالية ومطلوبة جداً." },
+
+  // BARISTA TOOLS
+  { keys: ['tools','أدوات','equipment','معدات','ما هي أدوات','barista tools','أدوات الباريستا'],
+    en: "Essential barista tools:\n• Espresso machine — the heart\n• Grinder — most important piece of equipment\n• Tamper — for even espresso puck\n• Scale — always weigh dose and yield\n• Milk pitcher — for steaming\n• Thermometer — milk temp accuracy\n• WDT tool — for even distribution\n• Portafilter & baskets — know your sizes (single/double)",
+    ar: "أدوات الباريستا الأساسية:\n• ماكينة الإسبريسو — القلب\n• الطاحونة — أهم قطعة عندك\n• التامبر — لضغط القهوة بشكل متساوي\n• الميزان — دايماً وزّن الدوز والناتج\n• إبريق الحليب — للتبخير\n• الترمومتر — دقة حرارة الحليب\n• أداة WDT — لتوزيع القهوة بالتساوي\n• البورتافيلتر والباسكيت — اعرف مقاساتك" },
+
+  // BARISTA MISTAKES
+  { keys: ['mistakes','أخطاء','common mistakes','barista mistakes','غلط','مشاكل'],
+    en: "Common barista mistakes:\n1. Not weighing dose — inconsistent results\n2. Uneven tamping — channeling in the puck\n3. Not purging steam wand — old milk ruins flavor\n4. Wrong milk temperature — above 70°C = burnt milk\n5. Stale coffee — freshness matters hugely\n6. Wrong grind size — affects extraction completely\n7. Not tasting your espresso — how will you know it's right?",
+    ar: "أخطاء الباريستا الشائعة:\n1. عدم وزن الدوز — نتائج غير متسقة\n2. الضغط غير المتساوي — channeling في الباك\n3. عدم تنظيف البخار — الحليب القديم يخرب النكهة\n4. حرارة الحليب غلط — فوق 70°C = حليب محترق\n5. القهوة غير طازجة — الطازجية أساسية\n6. حجم الطحن الغلط — بيأثر على الاستخراج كله\n7. عدم تذوق الإسبريسو — إزاي هتعرف إنه صح؟" },
+
+  // BREW RATIO
+  { keys: ['ratio','نسبة','coffee to water','dose','دوز','brew ratio','كمية'],
+    en: "Standard brew ratios:\n• Espresso → 1:2 (18g coffee : 36g liquid)\n• Ristretto → 1:1.5 (more concentrated)\n• Lungo → 1:3 (more diluted)\n• Pour over → 1:15 to 1:17\n• French press → 1:12 to 1:15\n• Cold brew → 1:8\nAlways use a scale. Consistency = quality.",
+    ar: "نسب التحضير الأساسية:\n• إسبريسو → 1:2 (18 جرام:36 جرام)\n• ريستريتو → 1:1.5 (أكثر تركيزاً)\n• لونجو → 1:3 (أكثر تخفيفاً)\n• بور أوفر → 1:15 إلى 1:17\n• فرنش برس → 1:12 إلى 1:15\n• كولد برو → 1:8\nدايماً استخدم ميزان. الاتساق = الجودة." },
+
+  // COFFEE STORAGE
+  { keys: ['storage','تخزين','store coffee','freshness','طازج','how to store'],
+    en: "How to store coffee properly:\n• Use an airtight container — away from light, heat, and moisture\n• Do NOT store in the fridge (absorbs odors)\n• Freezing is OK only for unopened bags long-term\n• Buy whole beans, grind fresh before brewing\n• Best consumed within 2–4 weeks of roast date\n• Check the roast date, not the expiry date",
+    ar: "كيف تخزن القهوة صح:\n• استخدم وعاء محكم الإغلاق بعيداً عن الضوء والحرارة والرطوبة\n• لا تحفظها في الثلاجة (بتمتص الروائح)\n• التجميد مقبول فقط للأكياس غير المفتوحة للتخزين الطويل\n• اشتري حبوب كاملة واطحن قبل التحضير مباشرة\n• الأفضل استخدامها خلال 2-4 أسابيع من تاريخ التحميص\n• راجع تاريخ التحميص مش تاريخ الانتهاء" },
+
+  // COFFEE VARIETIES
+  { keys: ['arabica','robusta','أرابيكا','روبوستا','variety','varieties','أصناف','geisha','gesha','جيشا'],
+    en: "Main coffee species:\n• Arabica (60-70% of world production): complex flavors, higher acidity, lower caffeine. Used in specialty.\n• Robusta: stronger, more bitter, higher caffeine. Used in commercial blends and some espressos.\nFamous Arabica varieties:\n• Gesha/Geisha: most expensive, floral, tea-like\n• Bourbon: sweet, complex\n• Typica: classic, clean\n• SL28 (Kenya): bold, blackcurrant",
+    ar: "أنواع القهوة الرئيسية:\n• أرابيكا (60-70% من الإنتاج العالمي): نكهات معقدة، حموضة أعلى، كافيين أقل. تستخدم في السبيشالتي.\n• روبوستا: أقوى وأكثر مرارة وكافيين أعلى. تستخدم في المزيجات التجارية.\nأشهر أصناف الأرابيكا:\n• جيشا/جيهي: الأغلى، زهري وشبيه بالشاي\n• بوربون: حلو ومعقد\n• تيبيكا: كلاسيكي ونضيف\n• SL28 (كينيا): جريء وكشمش أسود" }
 ];
 
-function detect(text) {
-  return /[\u0600-\u06FF]/.test(text) ? 'ar' : 'en';
-}
+function detect(t) { return /[\u0600-\u06FF]/.test(t) ? 'ar' : 'en'; }
 
 function findAnswer(q) {
-  const lower = q.toLowerCase();
+  const l = q.toLowerCase();
+  // direct match
   for (const item of kb) {
-    if (item.keys.some(k => lower.includes(k.toLowerCase()))) {
+    if (item.keys.some(k => l.includes(k.toLowerCase()))) {
       return detect(q) === 'ar' ? item.ar : item.en;
     }
   }
-  const lang = detect(q);
-  return lang === 'ar'
-    ? "سؤال كويس! دي معلومة مش في قاعدة بياناتي دلوقتي. ممكن تسأل عن: الإسبريسو، الاستخراج، المعالجة، البور أوفر، الكابينج، الطحن، الحليب، أو أصول القهوة."
-    : "Good question! That's not in my knowledge base yet. Try asking about: espresso, extraction, processing, pour over, cupping, grind size, milk steaming, or coffee origins.";
+  // fuzzy — check partial words
+  const words = l.split(/\s+/);
+  for (const item of kb) {
+    for (const k of item.keys) {
+      const kWords = k.toLowerCase().split(/\s+/);
+      if (kWords.some(kw => words.some(w => w.length > 3 && (w.includes(kw) || kw.includes(w))))) {
+        return detect(q) === 'ar' ? item.ar : item.en;
+      }
+    }
+  }
+  return detect(q) === 'ar'
+    ? "سؤال كويس! جرّب تسأل عن: الإسبريسو، اللاتيه، الكابتشينو، الفلات وايت، الكولد برو، البور أوفر، الفرنش برس، المعالجة، الطحن، الحليب، أصول القهوة (إثيوبيا، كينيا، كولومبيا، البرازيل، اليمن)، أدوات الباريستا، أو أخطاء شائعة."
+    : "Great question! Try asking about: espresso, latte, cappuccino, flat white, cold brew, pour over, french press, processing, grind size, milk steaming, origins (Ethiopia, Kenya, Colombia, Brazil, Yemen), barista tools, or common mistakes.";
 }
 
 function addMsg(text, role) {
@@ -135,30 +246,38 @@ function addMsg(text, role) {
   const msg = document.createElement('div');
   msg.className = 'msg ' + role;
   const av = document.createElement('div');
-  av.className = 'avatar ' + (role === 'user' ? 'user' : 'bot');
-  av.textContent = role === 'user' ? 'You' : '☕';
+  av.className = 'av ' + (role === 'user' ? 'user' : 'bot');
+  av.textContent = role === 'user' ? 'You' : 'SF';
   const bub = document.createElement('div');
   bub.className = 'bubble';
   bub.innerHTML = text.replace(/\n/g, '<br>');
-  msg.appendChild(av);
-  msg.appendChild(bub);
+  if (detect(text) === 'ar') bub.style.direction = 'rtl';
+  msg.appendChild(av); msg.appendChild(bub);
   chat.appendChild(msg);
   chat.scrollTop = chat.scrollHeight;
 }
 
-function ask(q) {
-  document.getElementById('userInput').value = q;
-  sendMsg();
+function showTyping() {
+  const chat = document.getElementById('chat');
+  const msg = document.createElement('div');
+  msg.className = 'msg'; msg.id = 'typing';
+  msg.innerHTML = '<div class="av bot">SF</div><div class="bubble"><div class="typing-dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div>';
+  chat.appendChild(msg); chat.scrollTop = chat.scrollHeight;
 }
+
+function ask(q) { document.getElementById('userInput').value = q; sendMsg(); }
 
 function sendMsg() {
   const input = document.getElementById('userInput');
-  const q = input.value.trim();
-  if (!q) return;
+  const q = input.value.trim(); if (!q) return;
   input.value = '';
   addMsg(q, 'user');
+  showTyping();
   setTimeout(() => {
+    const t = document.getElementById('typing'); if (t) t.remove();
     addMsg(findAnswer(q), 'bot');
-  }, 600);
+  }, 700);
 }
 </script>
+</body>
+</html>
